@@ -124,62 +124,116 @@
     <div class="container">
       <h1 class="title">Projects</h1>
       <hr />
-      <div class="tile is-ancestor">
-        <div class="tile is-vertical is-12">
-          <div class="tile">
-            <div class="tile is-parent">
-              <article class="tile is-child notification">
-                <p class="title">Project title</p>
-                <figure class="image is-3by2">
-                  <img class="modal-trigger" data-target="project-1-modal" src="img/project-1-cover.png">
-                </figure>
-              </article>
-            </div>
-            <div class="tile is-parent">
-              <article class="tile is-child notification">
-                <p class="title">Project title</p>
-                <figure class="image is-4by3">
-                  <img class="modal-trigger" data-target="project-2-modal" src="img/project-2-cover.png">
-                </figure>
-              </article>
-            </div>
-            <div class="tile is-parent">
-              <article class="tile is-child notification">
-                <p class="title">Project title</p>
-                <figure class="image is-4by3">
-                  <img class="modal-trigger" data-target="project-3-modal" src="img/project-3-cover.png">
-                </figure>
-              </article>
+      
+      <div class="card mb-5">
+        <div class="card-content">
+          <div class="content">
+            <p class="title is-4">Autonomous Differential-Drive Steering System for Pothole Avoidance</p>
+            <p class="subtitle is-6">Boston | <time datetime="2025-2">February 2025</time> - Present</p>
+            <ul>
+              <li>Built a two-wheel robot platform integrating a time-of-flight sensor and IMU data to detect uneven terrain and make real-time steering corrections</li>
+              <li>Developed and tested PPO reinforcement‑learning algorithms in PyBullet, refining control strategies for stable navigation</li>
+              <li>Streamlined model deployment on an Arduino Nicla Vision board, ensuring transfer of trained policies to physical hardware</li>
+            </ul>
+            <div class="tags">
+              <span class="tag">PPO</span>
+              <span class="tag">PyBullet</span>
+              <span class="tag">Arduino</span>
+              <span class="tag">Reinforcement Learning</span>
+              <span class="tag">IMU</span>
+              <span class="tag">TOF Sensor</span>
+              <span class="tag">Robotics</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="tile is-ancestor">
-        <div class="tile is-vertical is-12">
-          <div class="tile">
-            <div class="tile is-parent">
-              <article class="tile is-child notification">
-                <p class="title">Project title</p>
-                <figure class="image is-4by3">
-                  <img class="modal-trigger" data-target="project-4-modal" src="img/project-4-cover.png">
-                </figure>
-              </article>
+
+      <div class="card mb-5">
+        <div class="card-content">
+          <div class="content">
+            <p class="title is-4">Assistive Exoskeleton Technology Research</p>
+            <p class="subtitle is-6">Boston | <time datetime="2024-10">October 2024</time> - Present</p>
+            <ul>
+              <li>Automated a Python pipeline (Pandas, NumPy, regex) that ingests, cleans, and time‑aligns hundreds of wearable‑sensor files—cutting raw‑to‑ready prep from hours to ~10 min and boosting usable samples by 30%</li>
+              <li>Designed and trained TensorFlow models (CNN, LSTM, TCN) to predict gait phase; the streamlined data flow halved experiment cycles and raised validation accuracy to ≈ 91% macro F1</li>
+            </ul>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Pandas</span>
+              <span class="tag">NumPy</span>
+              <span class="tag">TensorFlow</span>
+              <span class="tag">CNN</span>
+              <span class="tag">LSTM</span>
+              <span class="tag">TCN</span>
+              <span class="tag">Gait Analysis</span>
             </div>
-            <div class="tile is-parent">
-              <article class="tile is-child notification">
-                <p class="title">Project title</p>
-                <figure class="image is-4by3">
-                  <img class="modal-trigger" data-target="project-5-modal" src="img/project-5-cover.png">
-                </figure>
-              </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-5">
+        <div class="card-content">
+          <div class="content">
+            <p class="title is-4">Synchronization & Coordination of Two Mobile Robots</p>
+            <p class="subtitle is-6">Boston | <time datetime="2024-10">October 2024</time> - <time datetime="2024-12">December 2024</time></p>
+            <ul>
+              <li>Configured a dual‑TurtleBot3 SLAM stack in ROS 1/Gazebo—gmapping + AMCL + move_base—so each robot could map, localize, and navigate autonomously in a custom world</li>
+              <li>Engineered multi‑robot integration: namespace‑isolated launch files and a custom map_merge node fused the two occupancy grids into one live map and eliminated TF‑frame collisions</li>
+              <li>Debugged cross‑package TF/topic conflicts (slam_gmapping ↔ explore_lite), documenting fixes and a scaling roadmap—experience that sharpened ROS troubleshooting and multi‑robot coordination skills</li>
+            </ul>
+            <div class="tags">
+              <span class="tag">ROS</span>
+              <span class="tag">TurtleBot3</span>
+              <span class="tag">SLAM</span>
+              <span class="tag">Gazebo</span>
+              <span class="tag">gmapping</span>  
+              <span class="tag">AMCL</span>
+              <span class="tag">Multi-Robot</span>
+              <span class="tag">Navigation</span>
             </div>
-            <div class="tile is-parent">
-              <article class="tile is-child notification">
-                <p class="title">Project title</p>
-                <figure class="image is-4by3">
-                  <img class="modal-trigger" data-target="project-6-modal" src="img/project-6-cover.png">
-                </figure>
-              </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-5">
+        <div class="card-content">
+          <div class="content">
+            <p class="title is-4">Design of Intelligent Sorting System of Robotic Arm Based on Voice Control</p>
+            <p class="subtitle is-6">China | <time datetime="2022-11">November 2022</time> - <time datetime="2022-12">December 2022</time></p>
+            <ul>
+              <li>Designed scanning detection and voice recognition modules using Altium Designer to support the robotic arm's sorting system</li>
+              <li>Implemented image recognition system using Halcon to drive the conveyor belt and automatic control</li>
+              <li>Utilized Arduino to write programs to control small lights and robotic arms through buttons and voice recognition modules connected to the micro-controller</li>
+            </ul>
+            <div class="tags">
+              <span class="tag">Altium Designer</span>
+              <span class="tag">Halcon</span>
+              <span class="tag">Arduino</span>
+              <span class="tag">Voice Recognition</span>
+              <span class="tag">Image Processing</span>
+              <span class="tag">Robotic Arm</span>
+              <span class="tag">PCB Design</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-5">
+        <div class="card-content">
+          <div class="content">
+            <p class="title is-4">Natural Field Electromagnetic Exploration System</p>
+            <p class="subtitle is-6">China | <time datetime="2020-9">September 2020</time> - <time datetime="2022-1">January 2022</time></p>
+            <ul>
+              <li>Designed the mechanical structure of suspended pod to carry the exploration system safely against vibrational forces</li>
+              <li><strong>Patent:</strong> Siyu Liu. 2022. Pod-type aviation low-frequency three-component natural field electromagnetic exploration system and control method. CN 114355459 A, filed January 7, 2022, Patent Pending.</li>
+            </ul>
+            <div class="tags">
+              <span class="tag">Mechanical Design</span>
+              <span class="tag">Electromagnetic Systems</span>
+              <span class="tag">Aerospace</span>
+              <span class="tag">Patent</span>
+              <span class="tag">Vibration Analysis</span>
+              <span class="tag">System Integration</span>
             </div>
           </div>
         </div>
