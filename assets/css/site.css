@@ -10,7 +10,7 @@
   --rule: #dce0dc;
   --accent: #0f6e56;
   --accent-soft: #e1f5ee;
-  --measure: 66ch;
+  --measure: 99ch;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -27,7 +27,7 @@ body {
 }
 
 .wrap { max-width: 1060px; margin: 0 auto; padding: 0 28px; }
-.narrow { max-width: 1060px; }
+.narrow { max-width: 780px; }
 
 a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
 a:focus-visible, .card:focus-visible {
