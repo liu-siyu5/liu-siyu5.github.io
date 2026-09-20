@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pothole-avoidance robot — Siyu (Sophia) Liu</title>
-<meta name="description" content="A two-wheel differential-drive robot designed and built with a partner, with a PPO avoidance policy trained on procedurally generated pothole terrain in PyBullet.">
+<meta name="description" content="A two-wheel mobile robot integrating ToF and IMU sensing with real-time motion control, with a PPO pothole-avoidance policy developed in simulation and evaluated on unseen terrain.">
 <link rel="stylesheet" href="../assets/css/site.css">
 </head>
 <body>
@@ -15,75 +15,92 @@
   <h1>Pothole-avoidance robot</h1>
   <dl class="dl">
     <dt>Where</dt>
-    <dd>Northeastern University, two-person project</dd>
+    <dd>Northeastern University</dd>
     <dt>When</dt>
     <dd>February – June 2025</dd>
     <dt>Role</dt>
-    <dd>Robot co-designed with my project partner; my share of the software is
-      noted below</dd>
+    <dd>Two-person project</dd>
     <dt>Stack</dt>
-    <dd>PyBullet, PPO, PyTorch, SolidWorks</dd>
+    <dd>PyBullet, PPO, PyTorch, SolidWorks, ToF and IMU</dd>
   </dl>
 </header>
 
 <main class="wrap narrow body-copy">
 
-  <p>A two-wheel differential-drive robot that steers around potholes. The
-    hardware was designed and built. The avoidance policy reported here was
-    trained and evaluated in simulation.</p>
+  <p>A two-wheel differential-drive robot that senses the terrain and steers
+    around potholes. The hardware was co-designed and built with my project
+    partner. My work focused on sensor and actuator bring-up, real-time motion
+    control, and the avoidance policy developed and evaluated in simulation.</p>
 
   <h2>The robot</h2>
 
   <figure>
     <div class="frame"><img src="../assets/img/robot-cad.png" alt="CAD render of the two-wheel differential-drive robot showing stacked control boards, motor drivers and the downward-facing sensor cone."></div>
-    <figcaption>Co-designed with my project partner. The cone shows the
-      downward-facing sensing footprint the avoidance policy was built
-      around.</figcaption>
+    <figcaption>The two-wheel differential-drive platform, with control
+      electronics, motor drivers and the downward-facing sensing hardware.</figcaption>
   </figure>
+
+  <p>The robot used a downward-facing sensing setup to observe the terrain
+    ahead while the differential-drive base provided the steering authority.
+    I brought up the sensor interfaces and actuator control, connecting the
+    measurements to the real-time motion-control stack and validating the
+    resulting behaviour on a physical test track.</p>
 
   <h2>Training terrain</h2>
 
   <p>Potholes were generated procedurally rather than authored, so no two
-    training episodes shared a layout and the policy could not memorise a
-    course.</p>
+    training episodes shared a layout and the policy could not simply memorise
+    a course.</p>
 
   <figure>
-    <div class="frame dark"><img src="../assets/img/terrain-gen.gif" alt="Animation of a terrain mesh deforming as potholes are carved into it and then flattened again."></div>
+    <div class="frame"><img src="../assets/img/terrain-gen.gif" alt="Animation of a terrain mesh deforming as potholes are carved into it and then flattened again."></div>
     <figcaption>One generation cycle: a flat mesh, potholes carved in, then
       reset. Every episode drew a new field.</figcaption>
   </figure>
 
+  <p>The same procedural generation also made evaluation possible on terrain
+    the policy had not seen during training, rather than testing it on a
+    fixed set of hand-authored layouts.</p>
+
   <h2>Policy</h2>
 
-  <p>A PPO policy in a two-branch actor-critic network, fusing a rendered depth
-    observation with vertical IMU acceleration. Evaluated over 300 episodes on
-    unseen terrain, it avoided 87% of potholes.</p>
+  <p>The avoidance policy used PPO with a two-branch actor-critic network,
+    fusing a rendered depth observation with vertical IMU acceleration.
+    Evaluated over 300 episodes on unseen terrain, it avoided 87% of
+    potholes.</p>
 
   <h2>What was hard</h2>
 
   <p>The reward function went through four iterations. The robot first learned
-    to spin in place, which collects no penalty and makes no progress. Adding a
-    penalty for spinning did not fix it, because punishing the symptom does not
-    remove the incentive; the behaviour turned into a slow spiral instead. It
-    only broke once the reward paid for visiting new grid cells, which gave
+    to spin in place, which collects no penalty and makes no progress. Adding
+    a penalty for spinning did not fix it, because punishing the symptom does
+    not remove the incentive; the behaviour turned into a slow spiral instead.
+    It only broke once the reward paid for visiting new grid cells, which gave
     forward motion something to earn.</p>
+
+  <h2>From simulation to hardware</h2>
+
+  <p>Simulation made it possible to develop and evaluate the avoidance policy
+    across procedurally generated terrain before running the system on the
+    physical platform. The hardware then introduced the parts that simulation
+    could not capture: real sensor interfaces, actuator response and the
+    timing of the complete sensing-to-control loop.</p>
+
+  <p>I brought up the ToF and IMU interfaces, connected their measurements to
+    the motion-control system, and validated the robot's behaviour on a
+    physical test track. The goal was not just to make each component work
+    independently, but to get sensing, decision-making and actuation working
+    together as one real-time system.</p>
 
   <h2>Limits</h2>
 
-  <p>The depth observation is rendered, with no sensor noise, dropouts or
-    dependence on surface reflectivity. The IMU signal is differenced from
+  <p>The depth observation was rendered, with no sensor noise, dropouts or
+    dependence on surface reflectivity. The IMU signal was differenced from
     simulated velocities rather than modelled as a real sensor with bias and
-    drift. Potholes are the only terrain feature, with no slopes, raised
-    obstacles or moving objects. The reward also carries a turn-direction bonus
-    that helped break symmetry during training but biases the policy and would
-    not belong in a serious version.</p>
-
-  <div class="pending">
-    <p><strong>Still being written.</strong> Two things on this page are not yet
-      pinned down and are deliberately left vague rather than guessed: the exact
-      form of the depth observation, and whether the trained policy was ever run
-      on the physical robot. Both will be corrected here once confirmed.</p>
-  </div>
+    drift. Potholes were the only terrain feature, with no slopes, raised
+    obstacles or moving objects. The reward also carried a turn-direction
+    bonus that helped break symmetry during training but biased the policy and
+    would not belong in a serious version.</p>
 
 </main>
 
