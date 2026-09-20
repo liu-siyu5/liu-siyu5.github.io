@@ -27,10 +27,11 @@
 
 <main class="wrap narrow body-copy">
 
-  <p>A two-wheel differential-drive robot that senses the terrain and steers
-    around potholes. The hardware was co-designed and built with my project
-    partner. My work focused on sensor and actuator bring-up, real-time motion
-    control, and the avoidance policy developed and evaluated in simulation.</p>
+  <p>A two-wheel differential-drive platform built with my project partner. I
+    brought up the ToF and IMU interfaces and tuned sensor fusion so the policy
+    saw consistent inputs across surfaces. I trained a PPO navigation policy in
+    PyBullet and deployed on-device inference to a memory-constrained embedded
+    board, shrinking the network to fit the compute budget.</p>
 
   <h2>The robot</h2>
 
@@ -42,9 +43,8 @@
 
   <p>The robot used a downward-facing sensing setup to observe the terrain
     ahead while the differential-drive base provided the steering authority.
-    I brought up the sensor interfaces and actuator control, connecting the
-    measurements to the real-time motion-control stack and validating the
-    resulting behaviour on a physical test track.</p>
+    I brought up the ToF and IMU interfaces and tuned sensor fusion so the
+    policy saw consistent inputs across surfaces.</p>
 
   <h2>Training terrain</h2>
 
@@ -64,10 +64,9 @@
 
   <h2>Policy</h2>
 
-  <p>The avoidance policy used PPO with a two-branch actor-critic network,
-    fusing a rendered depth observation with vertical IMU acceleration.
-    Evaluated over 300 episodes on unseen terrain, it avoided 87% of
-    potholes.</p>
+  <p>The navigation policy used PPO and was trained in PyBullet. I then
+    deployed on-device inference to a memory-constrained embedded board,
+    shrinking the network to fit the compute budget.</p>
 
   <h2>What was hard</h2>
 
@@ -80,17 +79,14 @@
 
   <h2>From simulation to hardware</h2>
 
-  <p>Simulation made it possible to develop and evaluate the avoidance policy
-    across procedurally generated terrain before running the system on the
-    physical platform. The hardware then introduced the parts that simulation
-    could not capture: real sensor interfaces, actuator response and the
-    timing of the complete sensing-to-control loop.</p>
+  <p>Simulation made it possible to develop the PPO navigation policy in
+    PyBullet before deploying inference to the physical robot. The embedded
+    board was memory-constrained, so I shrank the network to fit the available
+    compute budget.</p>
 
-  <p>I brought up the ToF and IMU interfaces, connected their measurements to
-    the motion-control system, and validated the robot's behaviour on a
-    physical test track. The goal was not just to make each component work
-    independently, but to get sensing, decision-making and actuation working
-    together as one real-time system.</p>
+  <p>I brought up the ToF and IMU interfaces, tuned sensor fusion so the policy
+    saw consistent inputs across surfaces, and integrated the on-device
+    inference with the robot's real-time motion-control system.</p>
 
   <h2>Limits</h2>
 
@@ -98,9 +94,7 @@
     dependence on surface reflectivity. The IMU signal was differenced from
     simulated velocities rather than modelled as a real sensor with bias and
     drift. Potholes were the only terrain feature, with no slopes, raised
-    obstacles or moving objects. The reward also carried a turn-direction
-    bonus that helped break symmetry during training but biased the policy and
-    would not belong in a serious version.</p>
+    obstacles or moving objects.</p>
 
 </main>
 
