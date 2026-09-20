@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="380" viewBox="0 0 680 380" role="img" aria-labelledby="ti de">
+<title id="ti">What buyers said</title><desc id="de">The headline finding is that SDK openness is the first filter buyers apply, ahead of hardware specifications. Below it, two columns of friction: in buying, and in integrating.</desc>
+<style>
+ .ts{font:400 12px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;fill:#4A5552}
+ .th{font:600 13px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;fill:#16211F}
+ .tb{font:600 14.5px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;fill:#085041}
+</style>
+<rect x="40" y="36" width="600" height="58" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<text class="tb" x="340" y="62" text-anchor="middle">SDK openness is the first filter buyers apply</text>
+<text class="ts" x="340" y="82" text-anchor="middle" fill="#0F6E56">ROS support and real documentation decide the shortlist, before any hardware spec does</text>
+<rect x="40" y="118" width="288" height="230" rx="10" fill="#F1EFE8" stroke="#6F6E69" stroke-width="0.7"/>
+<text class="th" x="60" y="146">Friction in buying</text>
+<circle cx="64" cy="172" r="3" fill="#6F6E69"/>
+<text class="ts" x="76" y="176">Buying is slow, messy and manual</text>
+<circle cx="64" cy="206" r="3" fill="#6F6E69"/>
+<text class="ts" x="76" y="210">No way to compare across brands;</text>
+<text class="ts" x="76" y="225">specs are not transparent</text>
+<circle cx="64" cy="240" r="3" fill="#6F6E69"/>
+<text class="ts" x="76" y="244">Total landed cost unclear until</text>
+<text class="ts" x="76" y="259">late — duties, taxes, fees</text>
+<circle cx="64" cy="274" r="3" fill="#6F6E69"/>
+<text class="ts" x="76" y="278">Some regions restrict imports</text>
+<text class="ts" x="76" y="293">outright</text>
+<circle cx="64" cy="308" r="3" fill="#6F6E69"/>
+<text class="ts" x="76" y="312">Missing components have to be</text>
+<text class="ts" x="76" y="327">sourced separately</text>
+<rect x="352" y="118" width="288" height="230" rx="10" fill="#F1EFE8" stroke="#6F6E69" stroke-width="0.7"/>
+<text class="th" x="372" y="146">Friction in integrating</text>
+<circle cx="376" cy="172" r="3" fill="#6F6E69"/>
+<text class="ts" x="388" y="176">Inconsistent or closed SDKs</text>
+<circle cx="376" cy="206" r="3" fill="#6F6E69"/>
+<text class="ts" x="388" y="210">Weak documentation</text>
+<circle cx="376" cy="240" r="3" fill="#6F6E69"/>
+<text class="ts" x="388" y="244">Payload power and I/O undocumented</text>
+<circle cx="376" cy="274" r="3" fill="#6F6E69"/>
+<text class="ts" x="388" y="278">Sensor hookup and compute</text>
+<text class="ts" x="388" y="293">integration</text>
+<circle cx="376" cy="308" r="3" fill="#6F6E69"/>
+<text class="ts" x="388" y="312">No standard interfaces, so no fair</text>
+<text class="ts" x="388" y="327">comparison</text>
+</svg>

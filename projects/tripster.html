@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tripster — Siyu (Sophia) Liu</title>
+<meta name="description" content="Product architecture and planning flow for a travel app in development.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>Tripster</h1>
+  <dl class="dl">
+    <dt>What</dt>
+    <dd>A travel app that plans itineraries and matches travelling companions</dd>
+    <dt>When</dt>
+    <dd>January 2026 – present</dd>
+    <dt>Role</dt>
+    <dd>Product architecture, planning flow, matching model</dd>
+    <dt>State</dt>
+    <dd>Prototype in development, sixteen screens</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>Travel apps mostly ask where you are going and what you like, then return
+    the top ten things in that city. The output is generic because the input
+    is. Tripster is an attempt at asking better questions — and at matching
+    people to travel with, not just places to go.</p>
+
+  <p>I own the product architecture: the data model, the planning flow, and
+    what the system asks a traveller for before it suggests anything.</p>
+
+  <h2>The design constraint I held to</h2>
+
+  <p>Every suggestion the app makes has to carry the reason it was made. A
+    recommended place says what about you it matched. A matched companion comes
+    with the reasons, not only a percentage.</p>
+
+  <p><strong>A number you cannot interrogate is not advice, it is an
+    instruction</strong> — and people reasonably ignore instructions about their
+    own holiday. A recommendation that gives its reasons can be disagreed with
+    on the specifics, which is what makes it worth reading. It also means the
+    app returns several plans rather than one, because the tradeoffs it asks
+    about have no single right answer.</p>
+
+  <div class="pending">
+    <p><strong>Details held back.</strong> This one is headed for release, so
+      the planning model and the matching logic are not described here. Happy
+      to talk through the architecture and the reasoning behind it.</p>
+  </div>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

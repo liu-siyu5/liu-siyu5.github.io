@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="480" viewBox="0 0 680 480" role="img" aria-labelledby="ti de">
+<title id="ti">Namespace isolation and map merge</title><desc id="de">Run two identical robots under one ROS master and their topics and transform frames collide, because both publish the same names. Prefixing every topic and frame with the robot it belongs to separates them. Each robot then builds its own occupancy grid, and a merge node fuses the two into one live map.</desc>
+<style>
+  .ts{font:400 12px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;fill:#4A5552}
+  .th{font:600 13px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;fill:#16211F}
+  .mono{font:400 12px ui-monospace,'SF Mono',Menlo,Consolas,monospace;fill:#4A5552}
+</style>
+<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6"
+ markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none"
+ stroke="#8B928D" stroke-width="1.5" stroke-linecap="round"
+ stroke-linejoin="round"/></marker></defs>
+<text class="th" x="40" y="34" fill="#16211F" text-anchor="start">Both robots, one ROS master</text>
+<rect x="40" y="48" width="250" height="150" rx="7" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.9"/>
+<text class="th" x="58" y="74" fill="#7A1F1F" text-anchor="start">robot A</text>
+<text class="mono" x="58" y="94" fill="#7A1F1F" text-anchor="start">/scan   /odom   /cmd_vel</text>
+<text class="mono" x="58" y="112" fill="#7A1F1F" text-anchor="start">odom → base_link</text>
+<text class="th" x="58" y="146" fill="#7A1F1F" text-anchor="start">robot B</text>
+<text class="mono" x="58" y="166" fill="#7A1F1F" text-anchor="start">/scan   /odom   /cmd_vel</text>
+<text class="mono" x="58" y="184" fill="#7A1F1F" text-anchor="start">odom → base_link</text>
+<text class="ts" x="40" y="222" fill="#4A5552" text-anchor="start">Identical names on both sides, so the topics and the</text>
+<text class="ts" x="40" y="240" fill="#4A5552" text-anchor="start">transform tree collide.</text>
+<line x1="302" y1="124" x2="344" y2="124" stroke="#8B928D" stroke-width="1.1" marker-end="url(#ar)"/>
+<text class="th" x="360" y="34" fill="#16211F" text-anchor="start">Namespaced</text>
+<rect x="360" y="48" width="280" height="70" rx="7" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.7"/>
+<text class="th" x="378" y="74" fill="#085041" text-anchor="start">tb3_0</text>
+<text class="mono" x="378" y="94" fill="#0F6E56" text-anchor="start">/tb3_0/scan   tb3_0/odom → tb3_0/base_link</text>
+<rect x="360" y="128" width="280" height="70" rx="7" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.7"/>
+<text class="th" x="378" y="154" fill="#085041" text-anchor="start">tb3_1</text>
+<text class="mono" x="378" y="174" fill="#0F6E56" text-anchor="start">/tb3_1/scan   tb3_1/odom → tb3_1/base_link</text>
+<text class="ts" x="360" y="222" fill="#4A5552" text-anchor="start">Every topic and every frame carries the robot it</text>
+<text class="ts" x="360" y="240" fill="#4A5552" text-anchor="start">belongs to, so nothing overlaps.</text>
+<rect x="90" y="288" width="190" height="60" rx="7" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.7"/>
+<text class="th" x="185" y="314" fill="#3C3489" text-anchor="middle">tb3_0 occupancy grid</text>
+<text class="ts" x="185" y="334" fill="#534AB7" text-anchor="middle">what A has seen</text>
+<rect x="400" y="288" width="190" height="60" rx="7" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.7"/>
+<text class="th" x="495" y="314" fill="#3C3489" text-anchor="middle">tb3_1 occupancy grid</text>
+<text class="ts" x="495" y="334" fill="#534AB7" text-anchor="middle">what B has seen</text>
+<line x1="185" y1="348" x2="320" y2="392" stroke="#8B928D" stroke-width="1.1" marker-end="url(#ar)"/>
+<line x1="495" y1="348" x2="360" y2="392" stroke="#8B928D" stroke-width="1.1" marker-end="url(#ar)"/>
+<rect x="230" y="396" width="220" height="60" rx="7" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.1"/>
+<text class="th" x="340" y="422" fill="#085041" text-anchor="middle">map merge node</text>
+<text class="ts" x="340" y="442" fill="#0F6E56" text-anchor="middle">one live map</text>
+</svg>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surgical robot column and beam — Siyu (Sophia) Liu</title>
+<meta name="description" content="Structural design of the lift column and upper beam of a laparoscopic surgical robot: guiding a telescoping column against moment from any bearing, supplier selection for the cylinder and rails, and a 1 mm tolerance chain to the instrument tip.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>Surgical robot column and beam</h1>
+  <dl class="dl">
+    <dt>Where</dt>
+    <dd>Sagebot, laparoscopic surgical robotics</dd>
+    <dt>When</dt>
+    <dd>April – August 2024</dd>
+    <dt>Role</dt>
+    <dd>Mechanical design engineer, one of a team</dd>
+    <dt>My part</dt>
+    <dd>The lift column and the upper beam, their drawings, and the actuator and guide selection</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>A laparoscopic surgical robot reaches over an operating table, holds
+    position while a surgeon works, and rolls out of the way afterwards. The
+    machine was built by a team. My part was the vertical structure it all
+    stands on and the beam at the top of it.</p>
+
+  <p class="pending"><strong>Under NDA.</strong> No drawings, models or product
+    detail appear here. The diagrams are mine, drawn from scratch at the level
+    of arrangement and load path.</p>
+
+  <h2>Three levels, three teams</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/sagebot-levels.svg" alt="Three stacked assemblies: two curved beams joined by a slewing bearing at the top, a separate turntable carrying four instrument arms below it, and a telescoping column with corner guides underneath."></div>
+  </figure>
+
+  <p>The machine stacks three assemblies that belong to different people. At the
+    top, two curved beams joined by a slewing bearing, so the front half can
+    swing through a limited arc and widen the space the arms below can reach.
+    Under that, a turntable carrying the four instrument arms, which another
+    team built. Underneath both, the lift column.</p>
+
+  <p>Knowing where those boundaries fall mattered more than it sounds. The
+    numbers in the tolerance chain and the loads at each interface had to be
+    agreed with the people on either side of them, not chosen alone.</p>
+
+  <h2>Guiding the column</h2>
+
+  <p>The column telescopes so the machine can set its height to the table and
+    the surgeon, and an electric cylinder raises it. The cylinder provides axial
+    thrust and nothing else — it is not a guide, and it should not be asked to
+    take a bending load.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/sagebot-column.svg" alt="Section through the column: the electric cylinder up the centre of the sleeve, with linear guides at the four corners of the sleeve section, and a note that the overturning moment can arrive from any bearing."></div>
+  </figure>
+
+  <p>That leaves the guides to take the overturning moment, and the awkward part
+    is that the moment has no fixed direction. The beam above swings on its own
+    slewing bearing, so the load can sit off to any side depending on where the
+    machine is set up. Two rails in one plane would hold one direction and give
+    way in the other.</p>
+
+  <p><strong>So the guides went into the four corners of the sleeve section:</strong>
+    two opposed pairs in perpendicular planes, which take the moment wherever it
+    comes from. Whatever height the column is at, the stiffness the arms sit on
+    is the same in every bearing — and that stiffness is what the instrument tip
+    feels.</p>
+
+  <h2>Selection and suppliers</h2>
+
+  <p>I chose the electric cylinder and the linear guides, and I did the supplier
+    side of it myself: comparing candidate models against the stroke, thrust and
+    moment requirements, then talking to the manufacturers about build quality,
+    what the specifications actually meant in service, and how the parts behaved
+    in practice rather than on the datasheet. I also checked the design against
+    the applicable ISO standards for surgical devices.</p>
+
+  <h2>Load path and tolerance chain</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/sagebot-loadpath.svg" alt="Chain from the instrument tip down through the arms, their turntable, the curved beams, the column slewing bearing, the guided sleeve, the cylinder and the base, with load running down and error accumulating up."></div>
+  </figure>
+
+  <p>The same chain runs both ways. Load goes down it to the floor; positioning
+    error comes back up it to the instrument tip. I ran the tolerance stack-up
+    along that chain to hold roughly 1 mm at the tip — the hardest number in it,
+    because the tip is furthest from the floor and every clearance below has
+    already been multiplied by distance.</p>
+
+  <p>The links I owned are the ones that move: a slewing bearing and a sliding
+    sleeve. Both have running clearance by definition, so both spend tolerance
+    that a bolted joint would not.</p>
+
+  <h2>Working through the build</h2>
+
+  <p>I produced the part and assembly drawings and integrated the bought-in
+    actuators, bearings and fasteners into them.</p>
+
+  <p>The part I would point to is what came after the drawings went out. I spent
+    time on the shop floor with the machinists and the assembly team, looking
+    for what a model does not show: gaps where covers met, binding in the
+    motion, parts that went together on screen and fought each other in the
+    flesh. Some of the analysis behind those fixes was software and some was
+    done by hand on paper — an order-of-magnitude check first, then the detailed
+    version. That habit came from this job and I have kept it.</p>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

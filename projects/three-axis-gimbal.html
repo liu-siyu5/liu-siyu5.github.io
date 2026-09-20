@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three-axis monitoring gimbal — Siyu (Sophia) Liu</title>
+<meta name="description" content="A three-axis outdoor camera gimbal taken from load estimates through motor and worm-gear selection, shaft and bearing checks, finite element validation, power electronics and an STM32 control loop.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>Three-axis monitoring gimbal</h1>
+  <dl class="dl">
+    <dt>Where</dt>
+    <dd>China University of Mining and Technology, School of Mechatronic Engineering</dd>
+    <dt>When</dt>
+    <dd>Undergraduate final project, submitted June 2023</dd>
+    <dt>Role</dt>
+    <dd>Sole designer: mechanism, drivetrains, structural analysis, power electronics, control software</dd>
+    <dt>Tools</dt>
+    <dd>SolidWorks, ANSYS, STM32, Altium</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>A camera stage for unattended outdoor monitoring of farmland and forest.
+    Units on the market were heavy, imprecise, and short-lived, so the brief was
+    a three-axis gimbal that would hold its aim through a long service life
+    outdoors. I did the whole machine: the mechanism, all three drivetrains, the
+    structural analysis, the power electronics and the control software.</p>
+
+  <h2>Three axes, three different problems</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/gimbal-axes.svg" alt="Kinematic stack from the base upward: boom rotary stage, boom, gimbal frame carrying yaw and pitch, camera rotary stage, camera."></div>
+  </figure>
+
+  <p>The interesting part of a three-axis machine is that the axes are not three
+    copies of the same thing. Each one carries a different inertia, so each was
+    sized from its own load estimate rather than from a single catalogue
+    choice — and the answers came out two orders of magnitude apart.</p>
+
+  <table class="spec">
+    <tr><th>Axis</th><th>Load torque</th><th>Motor</th><th>Output</th></tr>
+    <tr><td>Camera rotary stage</td><td>0.22 N·m<br>10 kg, 17.4 rad/s²</td>
+      <td>70LYX02, 0.5 N·m peak</td><td>20 rpm through a 65:1 worm</td></tr>
+    <tr><td>Gimbal frame, yaw and pitch</td><td>1.09 N·m<br>0.078 kg·m², 14 rad/s²</td>
+      <td>70LYX06, 2 N·m peak</td><td>30 rpm, 2.12 A at 22.99 V</td></tr>
+    <tr><td>Boom rotary stage</td><td>34.17 N·m<br>70 kg carried</td>
+      <td>130LYX02, 5.5 N·m peak</td><td>6 rpm, 113.9 N·m through a 65:1 worm</td></tr>
+  </table>
+
+  <p>Both rotary stages use a worm pair rather than a spur or belt reduction.
+    A worm holds its position when unpowered, which is what a camera left
+    outdoors between commands actually needs.</p>
+
+  <h2>Mounting the camera</h2>
+
+  <p>Before any of the drives could be sized, the camera had to attach to
+    something. I compared three ways of holding it. A fixed shell is simple and
+    secure but only fits one camera body. An automatic clamp, using a rack and
+    ratchet so both jaws close together, is the most convenient to use but adds
+    a mechanism inside a part that is already carrying the payload. A clamping
+    base sits between them: the camera bolts to a quick-release plate through
+    its own tripod thread, and the plate slides into the clamp.</p>
+
+  <p>I chose the clamping base and specified a K50 universal mount, because it
+    takes any camera that accepts a standard quick-release plate. That decision
+    fixed the payload interface, which is what let me put a number on the
+    carried mass and start sizing motors.</p>
+
+  <h2>Rotary stage</h2>
+
+  <p>This is the part I am most pleased with. The worm wheel is not just a
+    reduction — it is also the bearing surface the whole platform turns on. The
+    wheel is clamped to a centre sleeve that runs in two pairs of bearings, and
+    the camera platform sits directly on top of it, so the drive and the support
+    are the same assembly.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/rotary-stage.svg" alt="Section and plan of the camera rotary stage: platform on a turntable plate and centre sleeve in two pairs of bearings, worm wheel clamped to the sleeve, worm tangent to the wheel and driven through a coupling."></div>
+  </figure>
+
+  <p>The pair was designed to surface contact fatigue strength: an involute ZI
+    worm to GB/T 10085, single start, 45 steel with the flanks hardened to
+    45–55 HRC, running on a cast tin-phosphor bronze wheel. Allowable contact
+    stress came out at 216.1 MPa after a life factor of 0.81 on 5.6×10<sup>7</sup>
+    cycles. Centre distance 56.5 mm, worm pitch diameter 27.5 mm, wheel 85.5 mm.</p>
+
+  <h2>Boom</h2>
+
+  <p>Everything hangs off the boom, so it sets both the pointing accuracy and
+    most of the weight. It is a hollow tube throughout, 36.5 mm outside diameter
+    with a 4.5 mm wall, formed as a gooseneck so the camera sits clear of the
+    column.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/img/boom-3d.png" alt="Three-dimensional model of the gooseneck boom on its rotary base with the drive motor."></div>
+  </figure>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/gimbal-section.svg" alt="Longitudinal section through the boom showing the bore running the full length."></div>
+  </figure>
+
+  <figure>
+    <div class="frame"><img src="../assets/img/fea-stress.png" alt="ANSYS equivalent von Mises stress plot of the boom, peak 43.197 megapascals, minimum near zero."></div>
+    <figcaption>Static structural analysis in ANSYS. Structural steel, 250 MPa
+      tensile yield. Peak equivalent stress 43.197 MPa; peak total deformation
+      0.17453 mm.</figcaption>
+  </figure>
+
+  <p><strong>The peak stress reaches 17% of yield.</strong> Worth saying plainly,
+    because it explains the proportions. The boom looks heavy for what it
+    carries, and it is — but a pointing mechanism is sized by how far it bends,
+    not by how much it can take before it breaks. At 0.17 mm of tip deflection
+    the camera holds its aim, and the strength margin is what falls out of a
+    section stiff enough to do that.</p>
+
+  <p>Shafts were checked against reversed bending fatigue in 45 steel, with a
+    fatigue limit of 60 MPa against 355 MPa yield and 640 MPa ultimate. Bearings
+    were checked at an equivalent dynamic load of 105.4 N.</p>
+
+  <h2>Power and control</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/gimbal-electronics.svg" alt="Power chain from a 48 volt battery down through three regulator stages to 5 volts, and a control chain from the MPU6050 through the STM32 to the motor drivers with encoder feedback."></div>
+  </figure>
+
+  <p>The machine runs off a 48 V 25 Ah lithium pack, chosen so it can hold full
+    load outdoors without a mains feed. Three regulator stages step that down:
+    an LM5576 buck to 24 V, an LM2596T-12 to 12 V, and an LM340MP-5.0 linear to
+    5 V for the logic.</p>
+
+  <p>An STM32F103RCT6 runs the control. Attitude comes from an MPU6050 through
+    its on-chip digital motion processor, so the sensor fusion does not sit in
+    the main loop, and the motor drivers close the speed loop with encoders.
+    Axis control is incremental PID rather than positional: it works from the
+    last three errors instead of an accumulated sum, which keeps the arithmetic
+    off the MCU and means a disturbance leaves no integral term to unwind.</p>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

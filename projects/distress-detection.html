@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detecting distress in what people write — Siyu (Sophia) Liu</title>
+<meta name="description" content="A comparison of logistic regression, random forest and DistilBERT on 232,074 Reddit posts, evaluated on the metric that matters when a miss is the expensive error.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>Detecting distress in what people write</h1>
+  <dl class="dl">
+    <dt>Where</dt>
+    <dd>Northeastern University</dd>
+    <dt>When</dt>
+    <dd>Autumn 2025</dd>
+    <dt>Role</dt>
+    <dd>Sole author</dd>
+    <dt>Stack</dt>
+    <dd>Python, scikit-learn, gensim, Hugging Face Transformers</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>People in crisis often write about it before they tell anyone. A classifier
+    that reads public posts and flags the ones expressing suicidal ideation
+    could put a moderator or a support service in front of someone earlier. I
+    built three of them on 232,074 balanced Reddit posts and compared them
+    properly — a linear baseline, an ensemble, and a fine-tuned transformer.</p>
+
+  <h2>Deciding what counts as good before measuring anything</h2>
+
+  <p>Accuracy is the wrong metric here and it is worth being precise about why.
+    A false positive means a moderator reads a post that turned out to be fine.
+    A false negative means someone who was asking for help was not heard. Those
+    two are not the same size of mistake, so a single number that adds them
+    together with equal weight cannot rank these models.</p>
+
+  <p><strong>Recall is the criterion</strong>, fixed before the results came in.
+    Everything below is reported against it.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/sui-missed.svg" alt="Horizontal bars of missed cases: random forest 3,759, logistic regression 1,859, DistilBERT 437."></div>
+    <figcaption>The same test set, counted the way the task actually cares
+      about. Random forest misses 16.2% of real cases; DistilBERT misses
+      1.9%.</figcaption>
+  </figure>
+
+  <p>On a conventional scoreboard random forest looks respectable — 87%
+    accurate. Counted this way it misses one real case in six. The gap between
+    it and the transformer is not a few points of F1; it is 3,322 people whose
+    posts one model reads and the other does not.</p>
+
+  <h2>Three models, and what each is for</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/sui-models.svg" alt="Grouped bars comparing random forest, logistic regression and DistilBERT across recall, precision, F1 and ROC-AUC on the test set."></div>
+  </figure>
+
+  <p>DistilBERT wins on every metric: 98.1% recall, 97.8% F1, 0.997 AUC. Two
+    epochs of fine-tuning at the standard learning rate, 512-token sequences so
+    long posts are not truncated — and long posts matter here, because
+    distressed writing averages 203 words against 61 for ordinary discourse.</p>
+
+  <p>But the linear model is not there to lose. Logistic regression reaches 92%
+    recall at a tiny fraction of the cost, and unlike the transformer it can
+    tell you which words moved the decision. In a setting where a human has to
+    justify acting on a flag, that matters more than three points of recall.</p>
+
+  <h2>Three ways of choosing features, and a sanity check</h2>
+
+  <p>I ran all three families deliberately rather than picking one: chi-square
+    as a filter, recursive feature elimination as a wrapper, and Word2Vec as an
+    embedding. They answer different questions — which terms correlate with the
+    label, which terms a model actually leans on, and which terms mean similar
+    things.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/sui-features.svg" alt="Chi-square scores for the five top-ranked features: life, feel, suicide, want, kill."></div>
+  </figure>
+
+  <p>The real check came afterwards. The words with positive weight in the
+    linear model were <em>suicide</em>, <em>die</em>, <em>kill</em>,
+    <em>end</em>, <em>pain</em>; the negative ones were <em>lol</em>,
+    <em>fun</em>, <em>happy</em>, <em>friend</em>. That is not a result so much
+    as a reassurance: a model with high scores and nonsensical coefficients is
+    exploiting an artefact, and this one is not. On a task where the output
+    could route a real person to help, I would rather know that than have
+    another point of F1.</p>
+
+  <h2>The rest of the diligence</h2>
+
+  <p>Stratified 70/10/20 split. Five-fold cross-validation, which came back
+    within 0.002 of the single-run scores, so the ranking is not a lucky
+    partition. Validation and test F1 within a fifth of a percent for the linear
+    model, so no overfitting. Learning curves that flatten by about 10,000
+    samples, which says the dataset is comfortably large enough and the
+    remaining error is not something more data would fix.</p>
+
+  <p>SMOTE was wired into the pipeline and then did nothing, because the classes
+    were already balanced at 116,037 each. I left the conditional in and
+    reported that it did not fire, which is more useful than quietly removing
+    it — the next person to run this on an unbalanced corpus gets the handling
+    for free.</p>
+
+  <h2>What it does not do</h2>
+
+  <p>It reads one post at a time, with no history and no context, and labels
+    from a public dataset are somebody else's judgement of what distress looks
+    like. A system built on this would be a way to get a human to look sooner,
+    not a way to decide anything. That distinction is the whole design
+    constraint, and it is why recall was the metric from the start.</p>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

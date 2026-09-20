@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which errors can you live with — Siyu (Sophia) Liu</title>
+<meta name="description" content="Preprocessing and feature engineering for a toxic-tweet classifier, and what eight models revealed about the tradeoff between catching harmful content and flagging innocent posts.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>Which errors can you live with</h1>
+  <dl class="dl">
+    <dt>Where</dt>
+    <dd>Northeastern University, CS 6120 Natural Language Processing</dd>
+    <dt>When</dt>
+    <dd>Autumn 2025</dd>
+    <dt>Role</dt>
+    <dd>One of four; I owned preprocessing, cleaning, exploratory analysis and feature engineering</dd>
+    <dt>Stack</dt>
+    <dd>Python, NLTK, scikit-learn, sentence-transformers</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>A classifier that decides whether a tweet is offensive. Eight of them, in
+    fact — three sentence-transformer embeddings against two simple bag of words
+    baselines — on 56,745 labelled tweets, to find out how much the extra
+    machinery actually buys.</p>
+
+  <h2>Deciding what to throw away</h2>
+
+  <p>Cleaning social media text is mostly a series of decisions about what to
+    destroy. Each one is cheap to make and expensive to get wrong, because the
+    model never sees what you removed.</p>
+
+  <p><strong>Contractions get expanded before punctuation is stripped.</strong>
+    Do it the other way round and <code>can't</code> becomes <code>cant</code>,
+    or worse, <code>can</code> and <code>t</code> — and a sentence that said the
+    opposite of what it now says goes into training with the original label.
+    Negation is exactly the thing you cannot afford to lose in a task about
+    intent.</p>
+
+  <p><strong>Eleven stop words instead of NLTK's 179.</strong> The standard list
+    removes <code>not</code>, <code>no</code>, <code>never</code>, and it removes
+    <code>you</code>, <code>me</code>, <code>they</code>. For general topic
+    modelling that is fine. For detecting personal attacks it is the wrong list:
+    an insult is aimed at someone, so the pronouns are signal, and negation
+    flips meaning outright. I kept both and cut only true filler — articles,
+    conjunctions, and a handful of prepositions.</p>
+
+  <p>URLs, @mentions and HTML come out. Hashtag symbols come out but the word
+    stays, since <code>#idiot</code> is doing the same work as
+    <code>idiot</code>. Then lemmatisation, to stop the same word in three forms
+    being three features.</p>
+
+  <h2>Checking the cleaning against the statistics</h2>
+
+  <p>TF-IDF over unigrams and bigrams gives 5,000 features; a chi-square test
+    keeps the 1,000 most discriminative, an 80% cut.</p>
+
+  <p>The useful part is not the reduction, it is the check. The features
+    chi-square ranked highest were the same ones that dominated the word counts
+    in the exploratory pass — explicit profanity first, then identity-based
+    slurs, then aggressive verbs. Two independent views of the data agreeing is
+    evidence the cleaning preserved the signal rather than flattening it. Had
+    the top chi-square features been function words or artefacts, that would
+    have been the moment to go back.</p>
+
+  <h2>More context helps, more history doesn't</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/nlp-context.svg" alt="Two plots. F1 for n-gram models falls slightly as the order increases. F1 for context-window models rises steadily as the window widens from 3 to 21 tokens."></div>
+  </figure>
+
+  <p>Two baselines that both take more of the sentence, moving in opposite
+    directions. Longer n-grams get slightly worse: each additional order
+    multiplies the feature space, and the longer sequences mostly appear once,
+    in training, so the model memorises instead of generalising. Wider context
+    windows get steadily better, all the way to the widest we tried.</p>
+
+  <p>The difference is direction. An n-gram only ever looks backwards from a
+    token. A context window sees both sides. On a task where the offence often
+    sits in the object of a sentence rather than the verb, the second half
+    matters.</p>
+
+  <h2>The result is a choice, not a winner</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/nlp-tradeoff.svg" alt="Precision against recall for eight models. The two bag of words baselines sit top left with high precision and lower recall. The six transformer-based models cluster lower right with higher recall and slightly lower precision."></div>
+  </figure>
+
+  <p>The bag of words baselines are the most precise models in the set. When
+    they flag a tweet they are right about 96% of the time. They also miss the
+    most: the best n-gram model let nearly a thousand toxic tweets through.</p>
+
+  <p>The transformer embeddings catch noticeably more and are wrong slightly
+    more often when they do flag something. Neither corner is better in the
+    abstract. It depends entirely on which error you would rather explain — a
+    user whose harmless post was removed, or a user who was harassed by a post
+    the filter let through.</p>
+
+  <p><strong>We settled on recall as the primary metric</strong> and said so
+    before looking at the table, because the costs are not symmetric and picking
+    the metric afterwards means picking the winner. On that criterion the
+    transformer embeddings win; on precision they lose. Both statements are in
+    the results and both are true.</p>
+
+  <h2>Reading the mistakes</h2>
+
+  <p>We pulled the tweets every model got wrong and read them. Three things came
+    out that no metric shows.</p>
+
+  <p>Vulgarity aimed at objects — a beer, a television show — was read as an
+    attack on a person. Insults in quotation marks confused the models in both
+    directions. And insults without a single rude word went straight through:
+    <em>when you say you make mediocre videos, you're being way too
+    flattering</em> is not something a lexical model can catch.</p>
+
+  <p>Some of the false negatives looked like label noise rather than model
+    failure, and a few read as political statements rather than attacks, which
+    raises a question about the annotation this dataset inherited from its
+    sources. That is worth saying plainly: at 92% recall, a meaningful share of
+    what is left may not be the model's fault at all.</p>
+
+  <p>Five-fold cross-validation confirmed the gap between the two families holds
+    across splits, so the ranking is not an artefact of one unlucky partition.</p>
+
+  <p>The same reasoning about asymmetric errors drove
+    <a href="distress-detection.html">a separate project of mine on detecting
+    distress in public posts</a>, where the cost of a miss is far higher and the
+    metric choice matters more.</p>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

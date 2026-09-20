@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pothole-avoidance robot — Siyu (Sophia) Liu</title>
+<meta name="description" content="A two-wheel differential-drive robot designed and built with a partner, with a PPO avoidance policy trained on procedurally generated pothole terrain in PyBullet.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>Pothole-avoidance robot</h1>
+  <dl class="dl">
+    <dt>Where</dt>
+    <dd>Northeastern University, two-person project</dd>
+    <dt>When</dt>
+    <dd>February – June 2025</dd>
+    <dt>Role</dt>
+    <dd>Robot co-designed with my project partner; my share of the software is
+      noted below</dd>
+    <dt>Stack</dt>
+    <dd>PyBullet, PPO, PyTorch, SolidWorks</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>A two-wheel differential-drive robot that steers around potholes. The
+    hardware was designed and built. The avoidance policy reported here was
+    trained and evaluated in simulation.</p>
+
+  <h2>The robot</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/img/robot-cad.png" alt="CAD render of the two-wheel differential-drive robot showing stacked control boards, motor drivers and the downward-facing sensor cone."></div>
+    <figcaption>Co-designed with my project partner. The cone shows the
+      downward-facing sensing footprint the avoidance policy was built
+      around.</figcaption>
+  </figure>
+
+  <h2>Training terrain</h2>
+
+  <p>Potholes were generated procedurally rather than authored, so no two
+    training episodes shared a layout and the policy could not memorise a
+    course.</p>
+
+  <figure>
+    <div class="frame dark"><img src="../assets/img/terrain-gen.gif" alt="Animation of a terrain mesh deforming as potholes are carved into it and then flattened again."></div>
+    <figcaption>One generation cycle: a flat mesh, potholes carved in, then
+      reset. Every episode drew a new field.</figcaption>
+  </figure>
+
+  <h2>Policy</h2>
+
+  <p>A PPO policy in a two-branch actor-critic network, fusing a rendered depth
+    observation with vertical IMU acceleration. Evaluated over 300 episodes on
+    unseen terrain, it avoided 87% of potholes.</p>
+
+  <h2>What was hard</h2>
+
+  <p>The reward function went through four iterations. The robot first learned
+    to spin in place, which collects no penalty and makes no progress. Adding a
+    penalty for spinning did not fix it, because punishing the symptom does not
+    remove the incentive; the behaviour turned into a slow spiral instead. It
+    only broke once the reward paid for visiting new grid cells, which gave
+    forward motion something to earn.</p>
+
+  <h2>Limits</h2>
+
+  <p>The depth observation is rendered, with no sensor noise, dropouts or
+    dependence on surface reflectivity. The IMU signal is differenced from
+    simulated velocities rather than modelled as a real sensor with bias and
+    drift. Potholes are the only terrain feature, with no slopes, raised
+    obstacles or moving objects. The reward also carries a turn-direction bonus
+    that helped break symmetry during training but biases the policy and would
+    not belong in a serious version.</p>
+
+  <div class="pending">
+    <p><strong>Still being written.</strong> Two things on this page are not yet
+      pinned down and are deliberately left vague rather than guessed: the exact
+      form of the depth observation, and whether the trained policy was ever run
+      on the physical robot. Both will be corrected here once confirmed.</p>
+  </div>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

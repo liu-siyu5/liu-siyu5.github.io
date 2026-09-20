@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How far can you get without GPS — Siyu (Sophia) Liu</title>
+<meta name="description" content="Serial drivers for a GNSS receiver and a VectorNav IMU, magnetometer calibration, heading fusion, and dead reckoning measured against GPS truth over a 3.8 km drive.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>How far can you get without GPS</h1>
+  <dl class="dl">
+    <dt>Where</dt>
+    <dd>Northeastern University</dd>
+    <dt>When</dt>
+    <dd>Autumn 2024</dd>
+    <dt>Role</dt>
+    <dd>Course project, individual work</dd>
+    <dt>Stack</dt>
+    <dd>ROS, Python, a u-blox GNSS receiver and a VectorNav IMU on serial</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>Drivers first, then calibration, then a drive with everything recording, then
+    the question the whole thing is really about: with the satellites switched
+    off, how long can the inertial sensors alone tell you where you are?</p>
+
+  <p>The plots below were regenerated from the original bag files, so they are
+    the measurements, not a redrawing of them.</p>
+
+  <h2>Getting the data off the sensors</h2>
+
+  <p>Both drivers are mine. The GNSS one opens the serial port, filters for
+    <code>$GPGGA</code> sentences, converts the degree-minute latitude and
+    longitude into decimal degrees, applies the sign from the hemisphere
+    letters, projects to UTM and publishes it with the fix quality and HDOP
+    alongside. The IMU one parses <code>$VNYMR</code>, checks it has all
+    thirteen fields before trusting it, converts the Euler angles to a
+    quaternion and publishes at 40&nbsp;Hz.</p>
+
+  <p>Both messages carry the original sentence as a string field. That costs
+    almost nothing and means a bag recorded today can be re-parsed against a
+    fixed driver tomorrow, without driving the route again.</p>
+
+  <h2>The magnetometer is lying, and by how much</h2>
+
+  <p>Eighty-eight seconds of slow circles in a car park, to see what the
+    magnetometer reports when the true heading sweeps through every direction.
+    It should trace a circle centred on zero. It does not.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/nav-magcal.svg" alt="Two scatter plots of magnetometer X against Y. As measured, the circle is displaced well away from the origin. After hard-iron correction it is centred on the origin."></div>
+  </figure>
+
+  <p>The measured circle sits almost a full radius away from where it belongs:
+    the offset is 96% of the radius. Heading taken straight from those readings
+    would be wrong by up to <strong>74 degrees</strong> depending on which way
+    the car happened to be pointing. That is the metal of the vehicle itself,
+    carrying its own magnetic field around with the sensor.</p>
+
+  <p>Subtracting the centre fixes it. The obvious next step is a soft-iron
+    correction for the ellipticity, but there is only 1.4% of it left once the
+    offset is gone, so I left it out rather than fit a transform to noise.</p>
+
+  <h2>Two bad headings make one good one</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/nav-yaw.svg" alt="Heading over 12 minutes from three sources: integrated gyro, corrected magnetometer, and a complementary filter. All three follow the same staircase of turns; the gyro slowly separates from the other two."></div>
+  </figure>
+
+  <p>The magnetometer knows which way north is and will never drift, but it is
+    noisy and anything ferrous nearby moves it. The gyro is smooth and
+    immediate, and it drifts — 24 degrees over these twelve minutes, a slow lean
+    you can watch open up between the lines.</p>
+
+  <p>Their failure modes sit at opposite ends of the frequency range, so a
+    complementary filter can take the low frequencies from the magnetometer and
+    the high frequencies from the gyro and get a heading that is neither noisy
+    nor drifting. The staircase is the drive itself: each step is a turn.</p>
+
+  <h2>Speed is much harder than heading</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/nav-velocity.svg" alt="Forward speed over time. Straight integration of the accelerometer climbs steadily past 40 metres per second. The corrected estimate stays in the same range as GPS but loses track in places."></div>
+  </figure>
+
+  <p>The accelerometer has a bias of 0.63&nbsp;m/s². Integrate that for twelve
+    minutes and it alone produces 469&nbsp;m/s of speed that does not exist. The
+    grey line is what you get if you just integrate: it leaves the plot.</p>
+
+  <p>Removing the bias measured while stationary helps less than you would
+    expect, because the bias does not hold still either. What works is a
+    high-pass, which throws away the slow component the drift lives in. That
+    tracks GPS for stretches and then loses it — fair, because a high-pass also
+    throws away real slow changes in speed.</p>
+
+  <h2>Then the answer</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/nav-trajectory.svg" alt="Two paths from the same starting point. The GPS track loops around a route; the dead-reckoned path follows the first part and then separates, ending over a kilometre away."></div>
+  </figure>
+
+  <p>Heading and speed, integrated forward from a known start, against the GPS
+    track of the same drive. They agree at the beginning and then they do not.
+    After 3.8&nbsp;km the dead-reckoned position is <strong>1.2&nbsp;km from the
+    truth — 32% of the distance travelled</strong>, and that is with the speed
+    already scaled so the total path length matches, which a real system would
+    not have.</p>
+
+  <p>So: not very far. Which is the point. Integration has no memory of being
+    wrong and no way to be corrected, so every small error is permanent and they
+    only accumulate. Dead reckoning is what carries you between fixes, not
+    instead of them, and this is the measurement that tells you how often those
+    fixes have to arrive.</p>
+
+  <h2>What the GNSS receiver was doing meanwhile</h2>
+
+  <p>The same setup, stationary and walking, under open sky and next to
+    buildings, with and without RTK corrections. Standalone GNSS scattered 0.5
+    to 3.5&nbsp;m around its own centre even in the open. With RTK corrections
+    the same receiver held 0.01 to 0.08&nbsp;m, and held it under occlusion too.
+    Roughly two orders of magnitude, from one correction stream.</p>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

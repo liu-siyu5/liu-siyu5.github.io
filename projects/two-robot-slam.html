@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two robots, one map — Siyu (Sophia) Liu</title>
+<meta name="description" content="Two TurtleBot3 robots mapping and navigating a shared environment in ROS, with namespace-isolated launch files and a map merge node fusing their occupancy grids.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>Two robots, one map</h1>
+  <dl class="dl">
+    <dt>Where</dt>
+    <dd>Northeastern University</dd>
+    <dt>When</dt>
+    <dd>October – December 2024</dd>
+    <dt>Role</dt>
+    <dd>Course project</dd>
+    <dt>Stack</dt>
+    <dd>ROS, Gazebo, TurtleBot3, SLAM and the ROS navigation stack</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>Two TurtleBot3 robots exploring the same house, each building a map,
+    both ending up in one. Getting a single robot to map and navigate is a
+    well-trodden path. Adding a second one breaks things that had no reason to
+    break, and that is most of what this project turned out to be.</p>
+
+  <h2>One robot first</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/img/slam-rviz.jpg" alt="RViz showing a costmap of a house with inflation layers, laser scan returns and a planned global path, alongside the Gazebo world and a terminal printing the robot pose in the map frame."></div>
+    <figcaption>The stack running: occupancy grid and inflated costmap on the
+      left, the Gazebo house it is mapping behind, and the robot's pose in the
+      map frame in the terminal.</figcaption>
+  </figure>
+
+  <p>The coloured field is the costmap, not the map. The map is the black and
+    white part — walls the laser has confirmed. Everything soft around it is
+    inflation: the planner's own margin, grown outward from each obstacle so a
+    robot with width is not planned through a gap it cannot fit. The dark curve
+    is the global path, and the green dots are live scan returns landing on
+    walls that were already there, which is what mapping looks like when
+    localisation is holding.</p>
+
+  <h2>Then the second robot breaks it</h2>
+
+  <p>Two identical robots under one ROS master publish identical names. Both
+    have a <code>/scan</code>. Both have an <code>/odom</code>. Both broadcast a
+    transform from <code>odom</code> to <code>base_link</code>. Nothing in ROS
+    stops them, so subscribers receive an interleaved stream from two machines
+    and the transform tree ends up with one frame claiming two parents.</p>
+
+  <p>The symptom is not a crash. It is a robot that localises to somewhere it
+    has never been.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/slam-namespaces.svg" alt="Left: two robots publishing identical topic and frame names under one master, colliding. Right: the same topics and frames prefixed per robot. Below: each robot's occupancy grid feeding a merge node that produces one live map."></div>
+  </figure>
+
+  <p>The fix is to make every name carry the robot it belongs to — topics and
+    transform frames alike — and to set that up in the launch files so it is
+    structural rather than something each node has to remember. After that the
+    two stacks stop overwriting each other and each robot has a coherent view of
+    where it is.</p>
+
+  <h2>Two maps into one</h2>
+
+  <p>Separating them creates the opposite problem. Each robot now has its own
+    occupancy grid covering the part of the house it has visited, and neither
+    grid is the answer. I wrote a merge node that takes both and publishes a
+    single live map, so the pair share what either one has seen.</p>
+
+  <div class="pending">
+    <p><strong>Still to write up.</strong> The details of how the two grids are
+      brought into a common frame belong here and I would rather go back to the
+      code and get them right than reconstruct them from memory. Happy to walk
+      through it in the meantime.</p>
+  </div>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

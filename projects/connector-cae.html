@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aerospace connector, model and bench — Siyu (Sophia) Liu</title>
+<meta name="description" content="Ten months modelling circular aerospace connectors in Abaqus and ANSYS, running accelerated ageing and force tests on the bench, and correlating one against the other.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>Aerospace connector, model and bench</h1>
+  <dl class="dl">
+    <dt>Where</dt>
+    <dd>Harbin Institute of Technology, Institute of Electrical and Electronic Reliability</dd>
+    <dt>When</dt>
+    <dd>July 2023 – April 2024</dd>
+    <dt>Role</dt>
+    <dd>CAE engineer</dd>
+    <dt>Tools</dt>
+    <dd>Abaqus, ANSYS, Python, environmental chambers, force and endurance test rigs</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>Ten months on one question: how a circular aerospace connector loses its
+    grip. I built the finite element models that predicted it and ran the bench
+    tests that checked them, which meant I was on both sides of every
+    disagreement between the two.</p>
+
+  <p class="pending"><strong>Under NDA.</strong> No part numbers, geometry or
+    measured data appear here. The diagrams are mine, drawn at a generic level.</p>
+
+  <h2>What the model had to capture</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/conn-contact.svg" alt="A solid pin entering a socket, gripped at two contact points by springs that run back into the housing."></div>
+  </figure>
+
+  <p>The interesting physics sits at two small contact points. A pin of fixed
+    size goes into a socket; the springs inside deflect around it and hold it
+    there. What it takes to pull the pin back out comes from how hard those
+    springs press and how much friction that produces — not from anything you
+    can read off a drawing.</p>
+
+  <p>So the Abaqus models had to carry pin-to-socket contact, friction, and
+    nonlinear material behaviour together, and what came out of them was
+    insertion and withdrawal force and contact resistance. In ANSYS I ran
+    thermal-electrical coupling to find where heat concentrated, and harmonic
+    response to find where the structure would ring — a connector on an
+    aircraft has to keep contact through a vibration spectrum, not just sit
+    still on a bench.</p>
+
+  <h2>Ageing them on purpose</h2>
+
+  <p>Prediction only means something against parts that have actually been
+    through something. We soaked connectors in ovens across a range of
+    temperatures, held them there, and then measured what it took to push a pin
+    in and pull it out — every part number, every temperature.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/conn-ageing.svg" alt="Ovens at rising temperatures feeding a soak-and-measure step, with a chart showing insertion force nearly flat and withdrawal force falling away past a knee."></div>
+  </figure>
+
+  <p><strong>Insertion force barely moved. Withdrawal force held, and then past a
+    certain temperature it fell away.</strong> The asymmetry is the finding.
+    Insertion is mostly about pushing the springs open; withdrawal is about how
+    hard they are still pressing afterwards. When only the second one degrades,
+    the springs are relaxing — holding their deflection at temperature until
+    they stop pushing back as hard as they did. And because relaxation is
+    thermally activated, it stays slow until it isn't, which is the knee.</p>
+
+  <h2>A design change with no room to move</h2>
+
+  <p>The pin is solid and its size is fixed by the mating standard, so nothing
+    on that side of the interface can change. Any improvement had to come from
+    the socket. I was in the discussions on what to change there and ran the
+    calculations behind them; the revised geometry brought peak stress down by
+    about 12%.</p>
+
+  <p>Python did the post-processing. Stress, displacement and temperature fields
+    came out of every run without anyone exporting them by hand, which is what
+    made successive design revisions directly comparable instead of
+    approximately comparable.</p>
+
+  <h2>When the model and the bench disagreed</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/conn-disagreement.svg" alt="Five steps: the model gives an expectation, the measured force comes back far looser, judging which side is wrong, tracing it to mixed-up sample sizes, rerunning the test."></div>
+  </figure>
+
+  <p>One batch came back loose. Not slightly loose — loose enough that I looked
+    at it and thought it could not be right.</p>
+
+  <p>The reflex in that situation is to assume the bench is truth and go back to
+    adjust the model until it agrees. I did not have that reflex here, because
+    the model had reasons behind every number in it and the measurement did not
+    have a reason to be that far off. So the question became which side to
+    doubt, and I went after the test. The samples had been mixed up: a larger
+    size had gone through as a smaller one, so the fit was never what the record
+    said it was. Once the batch was identified correctly and the test rerun, the
+    two agreed.</p>
+
+  <p>That is what a year of correlating predictions against physical data
+    actually taught me. A model is a claim that has to be checked — and so is a
+    measurement.</p>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

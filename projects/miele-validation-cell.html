@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Appliance validation cell — Siyu (Sophia) Liu</title>
+<meta name="description" content="A robotic test cell for appliance validation: staged bring-up, a three-stage calibration chain, and positioning qualified under a 2 mm requirement.">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<div class="wrap narrow"><a class="backlink" href="../index.html">All work</a></div>
+
+<header class="wrap narrow detail-head">
+  <h1>Appliance validation cell</h1>
+  <dl class="dl">
+    <dt>Where</dt>
+    <dd>Miele Technology Inc., Emerging Technologies Lab, Boston</dd>
+    <dt>When</dt>
+    <dd>January – June 2026</dd>
+    <dt>Role</dt>
+    <dd>Robotics engineer, the only one on the team</dd>
+    <dt>Stack</dt>
+    <dd>ROS 1, MoveIt, Pilz industrial motion planner, franka_ros, AprilTag, Python</dd>
+  </dl>
+</header>
+
+<main class="wrap narrow body-copy">
+
+  <p>A robotic test cell for validating a household appliance. I took it from an
+    empty floor plan to a system that ran test sequences on its own: a
+    seven-axis arm, an industrial camera, a gripper with custom fingers, and the
+    perception, calibration and motion stack that tied them together.</p>
+
+  <p class="pending"><strong>Under NDA.</strong> The product under test, internal
+    test data and company drawings are left out. Every drawing on this page was
+    made by me from scratch, at a level of abstraction that gives away nothing
+    proprietary.</p>
+
+  <h2>Result</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/accuracy.svg" alt="Chart: system positioning error under 1.4 mm against a 2 mm requirement; repeatability after the planner change between 0.2 and 1.2 mm."></div>
+    <figcaption>Two different quantities. Absolute positioning error is measured
+      against the acceptance requirement; repeatability is the cycle-to-cycle
+      scatter after the planner change.</figcaption>
+  </figure>
+
+  <p>The cell had to hold 2&nbsp;mm, and the team wanted around 1&nbsp;mm if we
+    could get it. Measured positioning error came in under 1.4&nbsp;mm.
+    Repeatability, once the planner changed, sat between 0.2 and 1.2&nbsp;mm.</p>
+
+  <h2>System</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/architecture.svg" alt="Architecture: test sequencer, IDS camera and planned laser triangulation sensor, perception node, calibration chain of intrinsics, hand-eye and TCP, MoveIt with Pilz PTP, Franka Panda, appliance stand-in."></div>
+    <figcaption>Grey marks what was scoped but not completed. The laser
+      triangulation branch was specified and approved; procurement fell outside
+      my internship.</figcaption>
+  </figure>
+
+  <table class="spec">
+    <tr><th>Subsystem</th><th>Hardware</th><th>Role in the cell</th></tr>
+    <tr><td>Arm</td><td>Franka Emika Panda, 7 axes</td>
+      <td>Motion execution through franka_ros / libfranka</td></tr>
+    <tr><td>End effector</td><td>Franka gripper, custom fingers</td>
+      <td>Fingers printed in-house by the mechanical team on a Formlabs printer</td></tr>
+    <tr><td>Vision</td><td>IDS industrial camera, legacy model</td>
+      <td>AprilTag pose detection</td></tr>
+    <tr><td>Liquid level</td><td>Laser triangulation sensor</td>
+      <td>Selected for micron-level resolution; not procured before I left</td></tr>
+    <tr><td>Planning</td><td>MoveIt, Pilz industrial motion planner</td>
+      <td>PTP moves in a fixed, fully known cell</td></tr>
+  </table>
+
+  <h2>Bring-up</h2>
+
+  <p>The unit we were meant to test was still in transit from Europe, so the
+    cell was built around 1:1 stand-ins designed with the mechanical team. Each
+    layer of hardware went on only after the error it introduced could be
+    measured on its own.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/timeline.svg" alt="Eight bring-up stages from arm in isolation through to the planner change."></div>
+  </figure>
+
+  <h2>Measuring repeatability</h2>
+
+  <p>With no instrumentation budget, repeatability was measured by fixing a
+    laser pointer to the flange, commanding the arm back to the same pose over
+    repeated cycles, and reading the scatter of the spot against a fixed
+    external reference.</p>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/rig.svg" alt="Schematic: arm with a laser pointer on the flange projecting onto a fixed reference plate, with an inset showing the scatter of return positions."></div>
+  </figure>
+
+  <p>Sampling-based planning is built for environments that change. Ours did
+    not. The layout was fixed and every target pose was known, so the path
+    variability that makes the planner useful elsewhere was only costing us
+    accuracy. Switching to the Pilz planner's PTP mode brought the cell inside
+    the requirement.</p>
+
+  <h2>A failure that lived at an interface</h2>
+
+  <p>A hand-eye calibration offset was consistently biased in one direction.
+    Re-running the calibration and adjusting poses and parameters made no
+    difference. After reading that stream timing can corrupt the pose pairing, I
+    logged the camera and joint-state timestamps and confirmed they were not
+    aligned; correcting the capture timing removed the bias. Both subsystems
+    looked healthy in isolation. The failure only existed between them.</p>
+
+  <h2>Sensor selection: liquid level</h2>
+
+  <figure>
+    <div class="frame"><img src="../assets/fig/selection.svg" alt="Decision chain: transparent container rules out lidar and radar; laser triangulation chosen over time-of-flight for micron-level resolution."></div>
+  </figure>
+
+  <h2>Vendor and platform evaluation</h2>
+
+  <h3>Viam</h3>
+  <p>Evaluated Viam as a potential partner platform, running it alongside the
+    ROS setup rather than switching over, since an early-stage platform carried
+    integration risk. Bringing our hardware up on it was the work: the vendor had
+    no profiles for our equipment, much of which was old enough to have lost
+    manufacturer support, so I sourced models, configuration files and interface
+    specifications from the original manufacturers until every device was
+    connected. Software issues did surface during the evaluation. The
+    visualisation was still clearer than our ROS tooling for teammates without a
+    robotics background, and that assessment fed back into the partnership
+    discussion.</p>
+
+  <h3>End-effector fingers</h3>
+  <p>Joined supplier meetings with gripper and tactile-sensor vendors in Korea,
+    Japan, the United States and Australia, assessing mechanical and software
+    compatibility with our arm, fit to our use case, and realistic lead times.
+    The fingers we settled on were custom-made, printed in-house by the
+    mechanical team on a Formlabs printer.</p>
+
+  <h3>Handover</h3>
+  <p>Before leaving I wrote a set of handover documents split by subsystem,
+    covering build, operation and troubleshooting, so that whoever picked the
+    cell up next could run the code and change it without me.</p>
+
+</main>
+
+<footer class="wrap narrow">
+  <p><a href="../index.html">All work</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="mailto:liu.siyu5@northeastern.edu">liu.siyu5@northeastern.edu</a></p>
+</footer>
+
+</body>
+</html>

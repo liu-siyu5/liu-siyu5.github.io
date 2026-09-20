@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="580" viewBox="0 0 680 580" role="img" aria-labelledby="ti de">
+<title id="ti">Kinematic stack of the three-axis gimbal</title><desc id="de">From the base upward: a boom rotary stage turning about the vertical, the fixed boom, the gimbal frame carrying yaw and pitch, a camera rotary stage, and the camera.</desc>
+<style>
+  .t{font:400 14px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;fill:#16211F}
+  .ts{font:400 12px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;fill:#4A5552}
+  .th{font:600 14px system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;fill:#16211F}
+  .leader{stroke:#A8AEA9;stroke-width:.6;stroke-dasharray:3 3;fill:none}
+</style>
+<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6"
+ markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none"
+ stroke="#8B928D" stroke-width="1.5" stroke-linecap="round"
+ stroke-linejoin="round"/></marker></defs>
+<g><rect x="150" y="40" width="380" height="58" rx="8" fill="#F1EFE8" stroke="#6F6E69" stroke-width="0.7"/><text class="th" x="340" y="62" text-anchor="middle" fill="#444441">Camera</text><text class="ts" x="340" y="81" text-anchor="middle" fill="#5F5E5A">5 kg maximum</text></g>
+<line x1="340" y1="98" x2="340" y2="120" stroke="#8B928D" stroke-width="1.1" marker-end="url(#ar)"/>
+<g><rect x="150" y="124" width="380" height="58" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.7"/><text class="th" x="340" y="146" text-anchor="middle" fill="#085041">Camera rotary stage</text><text class="ts" x="340" y="165" text-anchor="middle" fill="#0F6E56">turns about the vertical</text></g>
+<line x1="340" y1="182" x2="340" y2="204" stroke="#8B928D" stroke-width="1.1" marker-end="url(#ar)"/>
+<g><rect x="150" y="208" width="380" height="58" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.7"/><text class="th" x="340" y="230" text-anchor="middle" fill="#085041">Gimbal frame</text><text class="ts" x="340" y="249" text-anchor="middle" fill="#0F6E56">yaw and pitch</text></g>
+<line x1="340" y1="266" x2="340" y2="288" stroke="#8B928D" stroke-width="1.1" marker-end="url(#ar)"/>
+<g><rect x="150" y="292" width="380" height="58" rx="8" fill="#F1EFE8" stroke="#6F6E69" stroke-width="0.7"/><text class="th" x="340" y="314" text-anchor="middle" fill="#444441">Boom</text><text class="ts" x="340" y="333" text-anchor="middle" fill="#5F5E5A">fixed structure</text></g>
+<line x1="340" y1="350" x2="340" y2="372" stroke="#8B928D" stroke-width="1.1" marker-end="url(#ar)"/>
+<g><rect x="150" y="376" width="380" height="58" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.7"/><text class="th" x="340" y="398" text-anchor="middle" fill="#085041">Boom rotary stage</text><text class="ts" x="340" y="417" text-anchor="middle" fill="#0F6E56">turns about the vertical</text></g>
+<line x1="340" y1="434" x2="340" y2="456" stroke="#8B928D" stroke-width="1.1" marker-end="url(#ar)"/>
+<g><rect x="150" y="460" width="380" height="58" rx="8" fill="#F1EFE8" stroke="#6F6E69" stroke-width="0.7"/><text class="th" x="340" y="482" text-anchor="middle" fill="#444441">Base</text><text class="ts" x="340" y="501" text-anchor="middle" fill="#5F5E5A">ground or building mount</text></g>
+<rect x="40" y="546" width="10" height="10" rx="2" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.6"/><text class="ts" x="58" y="555">Driven axis</text>
+<rect x="150" y="546" width="10" height="10" rx="2" fill="#F1EFE8" stroke="#6F6E69" stroke-width="0.6"/><text class="ts" x="168" y="555">Structure</text>
+</svg>
