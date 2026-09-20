@@ -148,7 +148,7 @@ figcaption {
   margin-top: 11px;
   font-size: 0.87rem;
   color: var(--ink-3);
-  max-width: 62ch;
+  max-width: none;
 }
 
 table.spec {
