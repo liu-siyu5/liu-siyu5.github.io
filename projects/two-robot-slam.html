@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Two robots, one map — Siyu (Sophia) Liu</title>
-<meta name="description" content="Two TurtleBot3 robots mapping and navigating a shared environment in ROS, with namespace-isolated launch files and a map merge node fusing their occupancy grids.">
+<meta name="description" content="Two TurtleBot3 robots mapping and navigating a shared environment in ROS, with namespace-isolated launch files and a custom map_merge node combining their occupancy grids.">
 <link rel="stylesheet" href="../assets/css/site.css">
 </head>
 <body>
@@ -27,62 +27,59 @@
 
 <main class="wrap narrow body-copy">
 
-  <p>Two TurtleBot3 robots exploring the same house, each building a map,
-    both ending up in one. Getting a single robot to map and navigate is a
-    well-trodden path. Adding a second one breaks things that had no reason to
-    break, and that is most of what this project turned out to be.</p>
+  <p>Two TurtleBot3 robots mapping and navigating the same environment under a shared ROS system. The goal was to let both robots localize independently while contributing to a shared occupancy map.</p>
 
   <h2>One robot first</h2>
 
   <figure>
-    <div class="frame"><img src="../assets/img/slam-rviz.jpg" alt="RViz showing a costmap of a house with inflation layers, laser scan returns and a planned global path, alongside the Gazebo world and a terminal printing the robot pose in the map frame."></div>
-    <figcaption>The stack running: occupancy grid and inflated costmap on the
-      left, the Gazebo house it is mapping behind, and the robot's pose in the
-      map frame in the terminal.</figcaption>
+    <div class="frame"><img src="../assets/img/slam-rviz.jpg" alt="RViz showing a TurtleBot3 costmap, laser scan returns and a planned global path, alongside the Gazebo environment and a terminal showing the robot pose in the map frame."></div>
+    <figcaption>The single-robot stack running: the occupancy grid and
+      costmap in RViz, the Gazebo environment behind it, and the robot's
+      pose in the map frame in the terminal.</figcaption>
   </figure>
 
-  <p>The coloured field is the costmap, not the map. The map is the black and
-    white part — walls the laser has confirmed. Everything soft around it is
-    inflation: the planner's own margin, grown outward from each obstacle so a
-    robot with width is not planned through a gap it cannot fit. The dark curve
-    is the global path, and the green dots are live scan returns landing on
-    walls that were already there, which is what mapping looks like when
-    localisation is holding.</p>
+  <p>I started with one TurtleBot3 and brought up the full SLAM and navigation
+    stack in Gazebo. Before adding a second robot, I verified that mapping,
+    localisation, costmaps and navigation were working together. This gave me
+    a known-good single-robot setup to debug against later.</p>
 
   <h2>Then the second robot breaks it</h2>
 
-  <p>Two identical robots under one ROS master publish identical names. Both
-    have a <code>/scan</code>. Both have an <code>/odom</code>. Both broadcast a
-    transform from <code>odom</code> to <code>base_link</code>. Nothing in ROS
-    stops them, so subscribers receive an interleaved stream from two machines
-    and the transform tree ends up with one frame claiming two parents.</p>
-
-  <p>The symptom is not a crash. It is a robot that localises to somewhere it
-    has never been.</p>
+  <p>Adding a second identical robot under the same ROS master introduced
+    intermittent failures. Both robots were publishing the same topic and
+    transform names — <code>/scan</code>, <code>/odom</code> and
+    <code>base_link</code>. The two data streams could interfere with each
+    other, and the transform trees were no longer unambiguous. The result was
+    localisation and navigation behaving as if a robot had moved somewhere it
+    had not.</p>
 
   <figure>
-    <div class="frame"><img src="../assets/fig/slam-namespaces.svg" alt="Left: two robots publishing identical topic and frame names under one master, colliding. Right: the same topics and frames prefixed per robot. Below: each robot's occupancy grid feeding a merge node that produces one live map."></div>
+    <div class="frame"><img src="../assets/fig/slam-namespaces.svg" alt="Left: two TurtleBot3 robots publishing identical topic and transform names under one ROS master. Right: the same topics and transforms separated by robot namespaces. Below: each robot's occupancy grid feeding a merge node that produces one shared map."></div>
   </figure>
 
-  <p>The fix is to make every name carry the robot it belongs to — topics and
-    transform frames alike — and to set that up in the launch files so it is
-    structural rather than something each node has to remember. After that the
-    two stacks stop overwriting each other and each robot has a coherent view of
-    where it is.</p>
+  <p>The problem was not the SLAM algorithm itself. It was the way the two
+    robots were sharing names inside ROS. I traced the failures to topic
+    namespace and TF collisions, then restructured the launch files so each
+    robot had its own namespace and transform tree. Relevant topics and TF
+    frames were remapped accordingly, giving each robot an independent
+    localisation and navigation stack.</p>
 
   <h2>Two maps into one</h2>
 
-  <p>Separating them creates the opposite problem. Each robot now has its own
-    occupancy grid covering the part of the house it has visited, and neither
-    grid is the answer. I wrote a merge node that takes both and publishes a
-    single live map, so the pair share what either one has seen.</p>
+  <p>Separating the robots solved the interference problem, but it created a
+    new one. Each robot now maintained its own occupancy grid, covering the
+    part of the environment it had explored. I wrote a custom
+    <code>map_merge</code> node to combine the two occupancy grids and publish
+    a shared occupancy map, allowing both robots to contribute what they had
+    seen.</p>
 
-  <div class="pending">
-    <p><strong>Still to write up.</strong> The details of how the two grids are
-      brought into a common frame belong here and I would rather go back to the
-      code and get them right than reconstruct them from memory. Happy to walk
-      through it in the meantime.</p>
-  </div>
+  <h2>What I was actually debugging</h2>
+
+  <p>The difficult part was not starting two robots. It was making the whole
+    ROS system behave like one multi-robot system without making the robots
+    behave like one robot. That meant isolating their topics and transform
+    trees, keeping localisation independent, and then connecting the two
+    resulting maps at the right level.</p>
 
 </main>
 
